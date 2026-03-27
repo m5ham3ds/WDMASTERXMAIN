@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/notification_title"
+        android:text="WiFi Card Master Pro"
+        android:textSize="16sp"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/notification_card"
+        android:text="Testing: 00:11:22:AA:BB:CC"
+        android:textSize="14sp"
+        android:layout_marginTop="4dp"/>
+
+    <ProgressBar
+        android:id="@+id/notification_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"/>
+
+    <TextView
+        android:id="@+id/notification_stats"
+        android:text="Tested: 0 | Success: 0 | Failed: 0"
+        android:textSize="12sp"
+        android:layout_marginTop="4dp"/>
+</LinearLayout>

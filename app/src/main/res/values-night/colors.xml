@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary Colors (Dark) -->
+    <color name="primary">#90CAF9</color>
+    <color name="primary_dark">#64B5F6</color>
+    <color name="primary_light">#1565C0</color>
+    <color name="accent">#FF8A65</color>
+    
+    <!-- Text Colors (Dark) -->
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#BDBDBD</color>
+    <color name="text_hint">#757575</color>
+    <color name="text_white">#FFFFFF</color>
+    
+    <!-- Background Colors (Dark) -->
+    <color name="background_light">#121212</color>
+    <color name="background_dark">#000000</color>
+    <color name="surface_light">#1E1E1E</color>
+    <color name="surface_dark">#121212</color>
+    
+    <!-- Terminal Colors (Dark) -->
+    <color name="terminal_background">#0D0D0D</color>
+    <color name="terminal_text">#E0E0E0</color>
+    <color name="terminal_success">#81C784</color>
+    <color name="terminal_error">#E57373</color>
+    <color name="terminal_warning">#FFD54F</color>
+    <color name="terminal_info">#64B5F6</color>
+    
+    <!-- Card Colors (Dark) -->
+    <color name="card_success_background">#1B5E20</color>
+    <color name="card_error_background">#B71C1C</color>
+    <color name="card_border">#424242</color>
+    
+    <!-- Navigation (Dark) -->
+    <color name="nav_selected">#90CAF9</color>
+    <color name="nav_unselected">#BDBDBD</color>
+</resources>

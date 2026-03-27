@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?android:attr/colorBackground">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary">
+            
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical">
+                
+                <TextView
+                    android:text="WiFi Card Master Pro"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"/>
+                
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    
+                    <View
+                        android:id="@+id/statusDot"
+                        android:background="@drawable/bg_dot_red"
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"
+                        android:layout_marginEnd="5dp"/>
+                    
+                    <TextView
+                        android:id="@+id/tvStatus"
+                        android:text="Disconnected"
+                        android:textColor="@android:color/white"
+                        android:textSize="12sp"/>
+                </LinearLayout>            </LinearLayout>
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            
+            <!-- Router Selector -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_marginBottom="12dp"
+                style="@style/Widget.Material3.CardView.Elevated"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                
+                <LinearLayout
+                    android:padding="12dp"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    
+                    <TextView
+                        android:text="Target Router"
+                        android:textStyle="bold"/>
+                    
+                    <Spinner
+                        android:id="@+id/spinnerRouters"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Settings Cards Grid -->
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="2">
+                
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_marginEnd="6dp"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"                    android:layout_height="wrap_content">
+                    
+                    <LinearLayout
+                        android:padding="10dp"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        
+                        <TextView
+                            android:text="Prefix"
+                            android:textSize="12sp"
+                            android:textColor="#666"/>
+                        
+                        <EditText
+                            android:id="@+id/etPrefix"
+                            android:text="00:11:22"
+                            android:maxLines="1"/>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+                
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_marginStart="6dp"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+                    
+                    <LinearLayout
+                        android:padding="10dp"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        
+                        <TextView
+                            android:text="Length"
+                            android:textSize="12sp"
+                            android:textColor="#666"/>
+                        
+                        <EditText
+                            android:id="@+id/etLength"
+                            android:inputType="number"
+                            android:text="16"
+                            android:maxLines="1"/>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+            
+            <!-- Chars and Max Tries -->
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"                android:layout_height="wrap_content"
+                android:weightSum="2"
+                android:layout_marginTop="8dp">
+                
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_marginEnd="6dp"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+                    
+                    <LinearLayout
+                        android:padding="10dp"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        
+                        <TextView
+                            android:text="Chars"
+                            android:textSize="12sp"
+                            android:textColor="#666"/>
+                        
+                        <EditText
+                            android:id="@+id/etChars"
+                            android:text="0123456789ABCDEF"
+                            android:maxLines="1"/>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+                
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_marginStart="6dp"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+                    
+                    <LinearLayout
+                        android:padding="10dp"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        
+                        <TextView
+                            android:text="Max Tries"
+                            android:textSize="12sp"
+                            android:textColor="#666"/>
+                        
+                        <EditText
+                            android:id="@+id/etMaxTries"
+                            android:inputType="number"
+                            android:text="1000"
+                            android:maxLines="1"/>                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+            <!-- Advanced Options -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_marginTop="12dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                
+                <LinearLayout
+                    android:padding="12dp"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    
+                    <TextView
+                        android:text="Advanced Options"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="8dp"/>
+                    
+                    <TextView
+                        android:id="@+id/tvDelayVal"
+                        android:text="Delay: 500ms"/>
+                    
+                    <com.google.android.material.slider.Slider
+                        android:id="@+id/sliderDelay"
+                        android:valueFrom="100"
+                        android:valueTo="2000"
+                        android:stepSize="100"/>
+                    
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/swStopOnSuccess"
+                        android:text="Stop on Success"
+                        android:layout_marginTop="8dp"/>
+                    
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/swSkipTested"
+                        android:text="Skip Tested Cards"
+                        android:checked="true"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Stats Row -->
+            <LinearLayout
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal"
+                android:weightSum="3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">                
+                <TextView
+                    android:id="@+id/statTested"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="Tested:\n0"
+                    android:textStyle="bold"/>
+                
+                <TextView
+                    android:id="@+id/statSuccess"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="Success:\n0"
+                    android:textColor="#4CAF50"
+                    android:textStyle="bold"/>
+                
+                <TextView
+                    android:id="@+id/statFailure"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="Failed:\n0"
+                    android:textColor="#F44336"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+
+            <!-- Progress -->
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/progressBar"
+                android:layout_marginTop="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            
+            <TextView
+                android:id="@+id/tvProgressPercent"
+                android:gravity="center"
+                android:text="0%"
+                android:layout_marginTop="4dp"/>
+
+            <!-- Terminal Log -->
+            <TextView
+                android:text="Terminal Output"
+                android:textStyle="bold"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="4dp"/>
+            
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvTerminal"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:background="@drawable/bg_terminal"                android:padding="8dp"/>
+
+            <!-- Action Buttons -->
+            <LinearLayout
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal"
+                android:weightSum="3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                
+                <Button
+                    android:id="@+id/btnStart"
+                    android:layout_weight="1"
+                    android:text="START"
+                    android:backgroundTint="#4CAF50"/>
+                
+                <Button
+                    android:id="@+id/btnStop"
+                    android:layout_weight="1"
+                    android:text="STOP"
+                    android:backgroundTint="#F44336"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"/>
+                
+                <Button
+                    android:id="@+id/btnExport"
+                    android:layout_weight="1"
+                    android:text="EXP"
+                    style="@style/Widget.Material3.Button.OutlinedButton"/>
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

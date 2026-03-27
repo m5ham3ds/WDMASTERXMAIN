@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Card Length Options -->
+    <string-array name="card_length_options">
+        <item>8</item>
+        <item>12</item>
+        <item>16</item>
+        <item>20</item>
+        <item>24</item>
+        <item>32</item>
+        <item>64</item>
+    </string-array>
+    
+    <!-- Delay Options -->
+    <string-array name="delay_options">
+        <item>100ms</item>
+        <item>200ms</item>
+        <item>500ms</item>
+        <item>1000ms</item>
+        <item>2000ms</item>
+    </string-array>
+    
+    <!-- Delay Values -->
+    <string-array name="delay_values">
+        <item>100</item>
+        <item>200</item>
+        <item>500</item>
+        <item>1000</item>
+        <item>2000</item>
+    </string-array>
+    
+    <!-- Max Tries Options -->
+    <string-array name="max_tries_options">
+        <item>100</item>
+        <item>500</item>
+        <item>1000</item>
+        <item>5000</item>
+        <item>10000</item>
+        <item>Unlimited</item>
+    </string-array>
+    
+    <!-- Max Tries Values -->
+    <string-array name="max_tries_values">
+        <item>100</item>
+        <item>500</item>
+        <item>1000</item>
+        <item>5000</item>
+        <item>10000</item>
+        <item>-1</item>
+    </string-array>
+    
+    <!-- Export Format Options -->
+    <string-array name="export_format_options">
+        <item>CSV</item>
+        <item>JSON</item>
+        <item>TXT</item>
+    </string-array>
+    
+    <!-- Log Level Options -->
+    <string-array name="log_level_options">
+        <item>All</item>
+        <item>Success Only</item>
+        <item>Errors Only</item>
+        <item>Warnings Only</item>
+    </string-array>
+    
+    <!-- Router Chipset Options -->
+    <string-array name="chipset_options">
+        <item>Broadcom</item>
+        <item>MediaTek</item>
+        <item>Qualcomm</item>
+        <item>Realtek</item>
+        <item>Intel</item>
+        <item>Other</item>
+    </string-array>
+</resources>

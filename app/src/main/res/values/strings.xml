@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">WiFi Card Master Pro</string>
+    
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_test">Test Results</string>
+    <string name="nav_settings">Settings</string>
+    
+    <!-- Home Screen -->
+    <string name="header_title">WiFi Card Master Pro</string>
+    <string name="status_connected">Connected</string>
+    <string name="status_disconnected">Disconnected</string>
+    <string name="status_running">Running</string>
+    <string name="status_paused">Paused</string>
+    
+    <!-- Card Settings -->
+    <string name="label_prefix">Prefix</string>
+    <string name="label_length">Length</string>
+    <string name="label_chars">Chars</string>
+    <string name="label_max_tries">Max Tries</string>
+    
+    <!-- Advanced Options -->
+    <string name="label_delay">Delay</string>
+    <string name="label_retry_count">Retry Count</string>
+    <string name="label_stop_on_success">Stop on Success</string>
+    <string name="label_skip_tested">Skip Tested Cards</string>
+    
+    <!-- Stats -->
+    <string name="stat_tested">Tested</string>
+    <string name="stat_success">Success</string>
+    <string name="stat_failure">Failed</string>
+    <string name="stat_speed">Speed</string>
+    <string name="stat_eta">ETA</string>
+    <string name="stat_rate">Success Rate</string>
+    
+    <!-- Buttons -->
+    <string name="btn_start">START</string>
+    <string name="btn_stop">STOP</string>
+    <string name="btn_pause">PAUSE</string>
+    <string name="btn_resume">RESUME</string>
+    <string name="btn_export">EXPORT</string>
+    <string name="btn_add">Add</string>
+    <string name="btn_edit">Edit</string>
+    <string name="btn_delete">Delete</string>
+    <string name="btn_save">Save</string>
+    <string name="btn_cancel">Cancel</string>
+    
+    <!-- Terminal -->
+    <string name="terminal_title">Terminal Output</string>
+    <string name="terminal_clear">Clear</string>
+    
+    <!-- Router -->
+    <string name="router_title">Target Router</string>
+    <string name="router_add">Add Router</string>
+    <string name="router_edit">Edit Router</string>
+    <string name="router_delete">Delete Router</string>
+    <string name="router_name">Router Name</string>
+    <string name="router_prefix">MAC Prefix</string>
+    <string name="router_chipset">Chipset</string>
+    <string name="router_active">Active</string>
+    
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_appearance">Appearance</string>
+    <string name="settings_dark_mode">Dark Mode</string>
+    <string name="settings_vibrate">Vibrate on Success</string>
+    <string name="settings_sound">Sound on Success</string>
+    <string name="settings_auto_export">Auto Export</string>
+    
+    <!-- Test Results -->
+    <string name="test_title">Test Results</string>
+    <string name="test_filter_all">All</string>
+    <string name="test_filter_success">Success</string>
+    <string name="test_filter_failed">Failed</string>
+    
+    <!-- Notifications -->
+    <string name="notification_channel_name">WDMASTER Service</string>
+    <string name="notification_channel_description">Shows test progress and controls</string>
+    <string name="notification_title">WiFi Card Master Pro</string>
+    
+    <!-- Messages -->
+    <string name="msg_invalid_config">Invalid configuration</string>
+    <string name="msg_service_started">Service Started</string>
+    <string name="msg_service_stopped">Service Stopped</string>
+    <string name="msg_success_found">Success found! Stopping.</string>
+    <string name="msg_max_tries_reached">Max tries reached.</string>
+    <string name="msg_skipping_duplicate">Skipping duplicate</string>
+    
+    <!-- About -->
+    <string name="about_title">About</string>
+    <string name="about_version">WiFi Card Master Pro v1.0</string>
+    <string name="about_developer">Developed with ❤️</string>
+</resources>
