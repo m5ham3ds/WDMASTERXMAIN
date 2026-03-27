@@ -7,6 +7,8 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.wdmaster.app.data.model.TestStats
+import java.text.SimpleDateFormat
+import java.util.Locale
 import java.text.DecimalFormat
 import java.util.*
 
