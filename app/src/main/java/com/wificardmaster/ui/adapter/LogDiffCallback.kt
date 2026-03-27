@@ -2,6 +2,7 @@ package com.wdmaster.app.ui.adapter
 
 import androidx.recyclerview.widget.DiffUtil
 import com.wdmaster.app.service.TestServiceBridge
+import com.wdmaster.app.data.model.LogItem
 
 class LogDiffCallback : DiffUtil.ItemCallback<LogItem>() {
     
