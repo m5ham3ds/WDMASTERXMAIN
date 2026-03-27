@@ -3,15 +3,15 @@ package com.wdmaster.app
 import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.Context
 import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
-import androidx.lifecycle.lifecycleScope
 import com.wdmaster.app.data.local.AppDatabase
-import com.wdmaster.app.data.repository.SettingsRepository
 import dagger.hilt.android.HiltAndroidApp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -20,20 +20,19 @@ private val Context.dataStore by preferencesDataStore(name = "settings")
 
 @HiltAndroidApp
 class WDMasterApp : Application() {
-    
+
     companion object {
-        @Inject
         lateinit var instance: WDMasterApp
             private set
-        
+
         const val NOTIFICATION_CHANNEL_ID = "wdmaster_foreground"
         const val NOTIFICATION_CHANNEL_NAME = "WDMASTER Service"
         const val NOTIFICATION_CHANNEL_DESCRIPTION = "Shows test progress and controls"
     }
-    
+
     @Inject
-    lateinit var settingsRepository: SettingsRepository
-    
+    lateinit var settingsRepository: com.wdmaster.app.data.repository.SettingsRepository
+
     override fun onCreate() {
         super.onCreate()
         instance = this
@@ -41,46 +40,52 @@ class WDMasterApp : Application() {
         loadDarkModeSetting()
         cleanupOldData()
     }
-    
+
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 NOTIFICATION_CHANNEL_ID,
                 NOTIFICATION_CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_LOW            ).apply {
+                NotificationManager.IMPORTANCE_LOW
+            ).apply {
                 description = NOTIFICATION_CHANNEL_DESCRIPTION
                 setSound(null, null)
                 enableVibration(false)
                 setShowBadge(false)
                 lockscreenVisibility = NotificationManager.VISIBILITY_SECRET
             }
-            val notificationManager = getSystemService(NotificationManager::class.java)
+
+            val notificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
             notificationManager.createNotificationChannel(channel)
         }
     }
-    
+
     private fun loadDarkModeSetting() {
-        lifecycleScope.launch {
+        CoroutineScope(Dispatchers.IO).launch {
             try {
-                val prefs = dataStore.data.first()
+                val prefs = applicationContext.dataStore.data.first()
                 val darkMode = prefs[booleanPreferencesKey("dark_mode")] ?: false
+
                 AppCompatDelegate.setDefaultNightMode(
-                    if (darkMode) AppCompatDelegate.MODE_NIGHT_YES 
+                    if (darkMode) AppCompatDelegate.MODE_NIGHT_YES
                     else AppCompatDelegate.MODE_NIGHT_NO
                 )
             } catch (e: Exception) {
-                // Use default
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+                AppCompatDelegate.setDefaultNightMode(
+                    AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+                )
             }
         }
     }
-    
+
     private fun cleanupOldData() {
-        lifecycleScope.launch {
+        CoroutineScope(Dispatchers.IO).launch {
             try {
                 val db = AppDatabase.getDatabase(this@WDMasterApp)
-                // Cleanup old results (older than 30 days)
-                val threshold = System.currentTimeMillis() - (30 * 24 * 60 * 60 * 1000L)
+                val threshold = System.currentTimeMillis() - (30L * 24 * 60 * 60 * 1000)
+
                 db.resultDao().deleteOldResults(threshold)
                 db.patternDao().cleanupOldPatterns(threshold)
             } catch (e: Exception) {
@@ -88,18 +93,17 @@ class WDMasterApp : Application() {
             }
         }
     }
-    
+
     override fun onTerminate() {
         super.onTerminate()
-        // Cleanup if needed
     }
-    
+
     override fun onLowMemory() {
         super.onLowMemory()
-        // Release resources if needed    }
-    
+        // Release resources if needed
+    }
+
     override fun onTrimMemory(level: Int) {
         super.onTrimMemory(level)
-        // Handle memory trim
     }
 }
