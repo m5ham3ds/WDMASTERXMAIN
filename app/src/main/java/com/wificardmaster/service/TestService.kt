@@ -1,6 +1,5 @@
 package com.wdmaster.app.service
 
-import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.os.Binder
@@ -17,12 +16,14 @@ import com.wdmaster.app.data.repository.RouterRepository
 import com.wdmaster.app.data.repository.SettingsRepository
 import com.wdmaster.app.domain.learning.PatternLearningSystem
 import com.wdmaster.app.notification.WDMasterNotification
-import com.wdmaster.app.ui.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 import kotlin.math.max
+
+// ✅ الحل هنا (مهم جدًا)
+import com.wdmaster.app.service.TestServiceBridge.ServiceEvent
 
 @AndroidEntryPoint
 class TestService : Service(), TestServiceBridge {
@@ -35,6 +36,7 @@ class TestService : Service(), TestServiceBridge {
 
     private val binder = LocalBinder()
     private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+
     private val _events = MutableSharedFlow<ServiceEvent>(replay = 1)
 
     private var isRunning = false
@@ -42,7 +44,9 @@ class TestService : Service(), TestServiceBridge {
     private var currentConfig = CardConfig()
     private var currentSettings = TestSettings()
     private var currentStats = TestStats()
+
     private val testedCards = mutableSetOf<String>()
+
     private var wakeLock: PowerManager.WakeLock? = null
     private var notificationManager: WDMasterNotification? = null
     private var currentRouterId: Int? = null
@@ -73,6 +77,7 @@ class TestService : Service(), TestServiceBridge {
 
     override fun sendCommand(command: TestServiceBridge.ServiceCommand) {
         when (command) {
+
             is TestServiceBridge.ServiceCommand.Start -> startTesting()
             is TestServiceBridge.ServiceCommand.Pause -> togglePause()
             is TestServiceBridge.ServiceCommand.Resume -> togglePause()
@@ -93,9 +98,9 @@ class TestService : Service(), TestServiceBridge {
         }
     }
 
-    override fun isRunning() = isRunning
-    override fun isPaused() = isPaused
-    override fun getCurrentStats() = currentStats
+    override fun isRunning(): Boolean = isRunning
+    override fun isPaused(): Boolean = isPaused
+    override fun getCurrentStats(): TestStats = currentStats
 
     private fun startTesting() {
         if (isRunning) return
@@ -114,7 +119,10 @@ class TestService : Service(), TestServiceBridge {
         var tries = 0L
         val startTime = System.currentTimeMillis()
 
-        currentStats = currentStats.copy(startTime = startTime, isRunning = true)
+        currentStats = currentStats.copy(
+            startTime = startTime,
+            isRunning = true
+        )
 
         while (isRunning && tries < currentConfig.maxTries) {
 
@@ -191,7 +199,12 @@ class TestService : Service(), TestServiceBridge {
     private fun stopTesting() {
         isRunning = false
         isPaused = false
+
         releaseWakeLock()
+
+        serviceScope.launch {
+            _events.emit(ServiceEvent.ServiceStopped)
+        }
 
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
@@ -203,17 +216,23 @@ class TestService : Service(), TestServiceBridge {
             .setContentTitle("WDMASTER")
             .setContentText(text)
             .setProgress(100, progress, false)
+            .setOngoing(true)
             .build()
 
     private fun acquireWakeLock() {
         val pm = getSystemService(POWER_SERVICE) as PowerManager
-        wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "wdmaster").apply {
+
+        wakeLock = pm.newWakeLock(
+            PowerManager.PARTIAL_WAKE_LOCK,
+            "wdmaster::lock"
+        ).apply {
+            setReferenceCounted(false)
             acquire(10 * 60 * 1000L)
         }
     }
 
     private fun releaseWakeLock() {
-        wakeLock?.release()
+        wakeLock?.takeIf { it.isHeld }?.release()
         wakeLock = null
     }
 
