@@ -5,9 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.wdmaster.app.data.model.TestResult
 import com.wdmaster.app.data.repository.ResultRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -39,7 +37,7 @@ class TestViewModel @Inject constructor(
         val success = results.count { it.success }
         val failure = results.count { !it.success }
         val rate = if (results.isNotEmpty()) (success * 100 / results.size) else 0
-        
+
         _uiState.value = TestUiState(
             totalCount = results.size,
             successCount = success,
@@ -50,10 +48,12 @@ class TestViewModel @Inject constructor(
 
     fun addResult(result: TestResult) {
         val currentResults = _results.value.toMutableList()
-        currentResults.add(0, result) // Add to top
+        currentResults.add(0, result)
+
         if (currentResults.size > 100) {
             currentResults.removeAt(currentResults.size - 1)
         }
+
         _results.value = currentResults
         updateStats(currentResults)
     }
@@ -61,10 +61,11 @@ class TestViewModel @Inject constructor(
     fun filterResults(success: Boolean?) {
         viewModelScope.launch {
             val filtered = when (success) {
-                true -> resultRepository.getSuccessfulResults().first
-                false -> resultRepository.getFailedResults().first
-                null -> resultRepository.getRecentResults(100).first
+                true -> resultRepository.getSuccessfulResults().first()
+                false -> resultRepository.getFailedResults().first()
+                null -> resultRepository.getRecentResults(100).first()
             }
+
             _results.value = filtered
         }
     }
@@ -78,7 +79,7 @@ class TestViewModel @Inject constructor(
     }
 
     fun exportResults(format: ExportFormat) {
-        // Implementation for export
+        // TODO: implement export
     }
 }
 
