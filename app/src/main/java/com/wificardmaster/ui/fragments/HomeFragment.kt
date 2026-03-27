@@ -27,27 +27,34 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
-    
+
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-    
+
     private var testService: TestService? = null
     private lateinit var terminalAdapter: TerminalAdapter
-    
+
+    // ✅ منع الكراش
+    private var isServiceBound = false
+
     @Inject
     lateinit var terminalLogger: TerminalLogger
-    
+
     private val connection = object : ServiceConnection {
+
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             val binder = service as TestService.LocalBinder
             testService = binder.getService()
+            isServiceBound = true
             bindServiceEvents()
         }
-        
+
         override fun onServiceDisconnected(name: ComponentName?) {
             testService = null
+            isServiceBound = false
         }
-    }    
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -56,7 +63,7 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
-    
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupTerminal()
@@ -64,19 +71,24 @@ class HomeFragment : Fragment() {
         setupSliders()
         updateStatusUI(false)
     }
-    
+
     override fun onStart() {
         super.onStart()
         Intent(requireContext(), TestService::class.java).also { intent ->
             requireContext().bindService(intent, connection, Context.BIND_AUTO_CREATE)
         }
     }
-    
+
     override fun onStop() {
         super.onStop()
-        requireContext().unbindService(connection)
+
+        // ✅ الحل الحقيقي
+        if (isServiceBound) {
+            requireContext().unbindService(connection)
+            isServiceBound = false
+        }
     }
-    
+
     private fun setupTerminal() {
         terminalAdapter = TerminalAdapter()
         binding.rvTerminal.apply {
@@ -84,104 +96,121 @@ class HomeFragment : Fragment() {
             adapter = terminalAdapter
         }
     }
-    
+
     private fun setupControls() {
         binding.btnStart.setOnClickListener {
+
             val config = CardConfig(
                 prefix = binding.etPrefix.text.toString(),
                 length = binding.etLength.text.toString().toIntOrNull() ?: 16,
-                allowedChars = binding.etChars.text.toString().takeIf { it.isNotEmpty() } ?: "0123456789ABCDEF",
+                allowedChars = binding.etChars.text.toString()
+                    .takeIf { it.isNotEmpty() } ?: "0123456789ABCDEF",
                 maxTries = binding.etMaxTries.text.toString().toLongOrNull() ?: 1000
             )
-            
+
             if (!config.validate()) {
                 Toast.makeText(requireContext(), "Invalid configuration", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener            }
-            
+                return@setOnClickListener
+            }
+
             testService?.sendCommand(TestServiceBridge.ServiceCommand.UpdateConfig(config))
             testService?.sendCommand(TestServiceBridge.ServiceCommand.Start)
         }
-        
+
         binding.btnStop.setOnClickListener {
             testService?.sendCommand(TestServiceBridge.ServiceCommand.Stop)
         }
-        
+
         binding.btnExport.setOnClickListener {
-            Toast.makeText(requireContext(), "Export functionality coming soon", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Export coming soon", Toast.LENGTH_SHORT).show()
         }
     }
-    
+
     private fun setupSliders() {
         binding.sliderDelay.addOnChangeListener { _, value, _ ->
             binding.tvDelayVal.text = "Delay: ${value.toInt()}ms"
-            testService?.sendCommand(
-                TestServiceBridge.ServiceCommand.UpdateSettings(
-                    skipTested = binding.swSkipTested.isChecked,
-                    stopOnSuccess = binding.swStopOnSuccess.isChecked,
-                    delayMs = value.toLong()
-                )
-            )
+
+            updateServiceSettings(value.toLong())
         }
-        
+
         binding.swSkipTested.setOnCheckedChangeListener { _, _ ->
-            updateServiceSettings()
+            updateServiceSettings(binding.sliderDelay.value.toLong())
         }
-        
+
         binding.swStopOnSuccess.setOnCheckedChangeListener { _, _ ->
-            updateServiceSettings()
+            updateServiceSettings(binding.sliderDelay.value.toLong())
         }
     }
-    
-    private fun updateServiceSettings() {
+
+    private fun updateServiceSettings(delay: Long) {
         testService?.sendCommand(
             TestServiceBridge.ServiceCommand.UpdateSettings(
                 skipTested = binding.swSkipTested.isChecked,
                 stopOnSuccess = binding.swStopOnSuccess.isChecked,
-                delayMs = binding.sliderDelay.value.toLong()
+                delayMs = delay
             )
         )
     }
-    
+
     private fun bindServiceEvents() {
-        testService?.observeEvents()?.onEach { event ->
-            when (event) {
-                is TestServiceBridge.ServiceEvent.LogMessage -> {                    terminalAdapter.addLog(event.msg, event.type)
-                    binding.rvTerminal.smoothScrollToPosition(terminalAdapter.itemCount - 1)
+        testService?.observeEvents()
+            ?.onEach { event ->
+
+                when (event) {
+
+                    is TestServiceBridge.ServiceEvent.LogMessage -> {
+                        terminalAdapter.addLog(event.msg, event.type)
+                        binding.rvTerminal.smoothScrollToPosition(terminalAdapter.itemCount - 1)
+                    }
+
+                    is TestServiceBridge.ServiceEvent.StatsUpdate -> {
+                        binding.statTested.text = "Tested:\n${event.stats.tested}"
+                        binding.statSuccess.text = "Success:\n${event.stats.success}"
+                        binding.statFailure.text = "Failed:\n${event.stats.failure}"
+
+                        binding.progressBar.setProgressCompat(
+                            (event.stats.progress * 100).toInt(),
+                            true
+                        )
+
+                        binding.tvProgressPercent.text =
+                            "${(event.stats.progress * 100).toInt()}%"
+                    }
+
+                    is TestServiceBridge.ServiceEvent.ServiceStarted -> {
+                        updateStatusUI(true)
+                    }
+
+                    is TestServiceBridge.ServiceEvent.ServiceStopped -> {
+                        updateStatusUI(false)
+                        Toast.makeText(requireContext(), "Service Stopped", Toast.LENGTH_SHORT).show()
+                    }
+
+                    is TestServiceBridge.ServiceEvent.ServicePaused -> {
+                        binding.btnStart.text = "RESUME"
+                    }
+
+                    is TestServiceBridge.ServiceEvent.ServiceResumed -> {
+                        binding.btnStart.text = "START"
+                    }
+
+                    else -> {}
                 }
-                is TestServiceBridge.ServiceEvent.StatsUpdate -> {
-                    binding.statTested.text = "Tested:\n${event.stats.tested}"
-                    binding.statSuccess.text = "Success:\n${event.stats.success}"
-                    binding.statFailure.text = "Failed:\n${event.stats.failure}"
-                    binding.progressBar.setProgressCompat((event.stats.progress * 100).toInt(), true)
-                    binding.tvProgressPercent.text = "${(event.stats.progress * 100).toInt()}%"
-                }
-                is TestServiceBridge.ServiceEvent.ServiceStarted -> {
-                    updateStatusUI(true)
-                }
-                is TestServiceBridge.ServiceEvent.ServiceStopped -> {
-                    updateStatusUI(false)
-                    Toast.makeText(requireContext(), "Service Stopped", Toast.LENGTH_SHORT).show()
-                }
-                is TestServiceBridge.ServiceEvent.ServicePaused -> {
-                    binding.btnStart.text = "RESUME"
-                }
-                is TestServiceBridge.ServiceEvent.ServiceResumed -> {
-                    binding.btnStart.text = "START"
-                }
-                else -> {}
             }
-        }?.launchIn(viewLifecycleOwner.lifecycleScope)
+            ?.launchIn(viewLifecycleOwner.lifecycleScope)
     }
-    
+
     private fun updateStatusUI(isRunning: Boolean) {
         binding.statusDot.setBackgroundResource(
             if (isRunning) R.drawable.bg_dot_green else R.drawable.bg_dot_red
         )
+
         binding.tvStatus.text = if (isRunning) "Running" else "Disconnected"
+
         binding.btnStart.isEnabled = !isRunning
         binding.btnStop.isEnabled = isRunning
     }
-    
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
