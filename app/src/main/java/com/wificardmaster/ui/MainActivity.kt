@@ -47,7 +47,8 @@ class MainActivity : AppCompatActivity() {
         loadDefaultFragment()
     }
     
-    override fun onStart() {        super.onStart()
+    override fun onStart() {
+        super.onStart()
         Intent(this, TestService::class.java).also { intent ->
             bindService(intent, connection, Context.BIND_AUTO_CREATE)
         }
@@ -96,7 +97,8 @@ class MainActivity : AppCompatActivity() {
                     // Update UI with stats
                 }
                 is TestServiceBridge.ServiceEvent.TestResult -> {
-                    // Update test results                }
+                    // Update test results
+                }
                 else -> {}
             }
         }?.launchIn(lifecycleScope)
