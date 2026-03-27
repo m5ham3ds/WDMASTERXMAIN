@@ -1,6 +1,7 @@
 package com.wdmaster.app
 
 import android.app.Application
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -52,7 +53,8 @@ class WDMasterApp : Application() {
                 setSound(null, null)
                 enableVibration(false)
                 setShowBadge(false)
-                lockscreenVisibility = NotificationManager.VISIBILITY_SECRET
+                // ✅ الإصلاح هنا
+                lockscreenVisibility = Notification.VISIBILITY_SECRET
             }
 
             val notificationManager =
@@ -100,7 +102,6 @@ class WDMasterApp : Application() {
 
     override fun onLowMemory() {
         super.onLowMemory()
-        // Release resources if needed
     }
 
     override fun onTrimMemory(level: Int) {
