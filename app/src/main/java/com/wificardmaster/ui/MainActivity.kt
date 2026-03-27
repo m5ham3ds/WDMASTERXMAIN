@@ -19,90 +19,115 @@ import kotlinx.coroutines.flow.onEach
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-    
+
     private lateinit var binding: ActivityMainBinding
+
     private var testService: TestService? = null
     private var serviceBridge: TestServiceBridge? = null
-    
+
+    // ✅ مهم جدًا لتفادي الكراش
+    private var isServiceBound = false
+
     private val connection = object : ServiceConnection {
+
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             val binder = service as TestService.LocalBinder
             testService = binder.getService()
             serviceBridge = testService
+
+            isServiceBound = true
+
             bindServiceEvents()
         }
-        
+
         override fun onServiceDisconnected(name: ComponentName?) {
             testService = null
             serviceBridge = null
+            isServiceBound = false
         }
     }
-    
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        
+
         setupBottomNavigation()
         loadDefaultFragment()
     }
-    
+
     override fun onStart() {
         super.onStart()
+
         Intent(this, TestService::class.java).also { intent ->
             bindService(intent, connection, Context.BIND_AUTO_CREATE)
         }
     }
-    
+
     override fun onStop() {
         super.onStop()
-        unbindService(connection)
+
+        // ✅ الحل الحقيقي للكراش
+        if (isServiceBound) {
+            unbindService(connection)
+            isServiceBound = false
+        }
     }
-    
+
     private fun setupBottomNavigation() {
         binding.bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
+
                 R.id.nav_home -> {
                     loadFragment(HomeFragment())
                     true
                 }
+
                 R.id.nav_test -> {
                     loadFragment(TestFragment())
                     true
                 }
+
                 R.id.nav_settings -> {
                     loadFragment(SettingsFragment())
                     true
                 }
+
                 else -> false
             }
         }
     }
-    
+
     private fun loadDefaultFragment() {
         loadFragment(HomeFragment())
         binding.bottomNavigation.selectedItemId = R.id.nav_home
     }
-    
+
     private fun loadFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
             .commit()
     }
-    
+
     private fun bindServiceEvents() {
-        serviceBridge?.observeEvents()?.onEach { event ->
-            when (event) {
-                is TestServiceBridge.ServiceEvent.StatsUpdate -> {
-                    // Update UI with stats
+        serviceBridge?.observeEvents()
+            ?.onEach { event ->
+                when (event) {
+
+                    is TestServiceBridge.ServiceEvent.StatsUpdate -> {
+                        // TODO: update UI
+                    }
+
+                    is TestServiceBridge.ServiceEvent.TestResult -> {
+                        // TODO: update results
+                    }
+
+                    else -> {}
                 }
-                is TestServiceBridge.ServiceEvent.TestResult -> {
-                    // Update test results
-                }
-                else -> {}
             }
-        }?.launchIn(lifecycleScope)
+            ?.launchIn(lifecycleScope)
     }
-    
+
     fun getServiceBridge(): TestServiceBridge? = serviceBridge
 }
