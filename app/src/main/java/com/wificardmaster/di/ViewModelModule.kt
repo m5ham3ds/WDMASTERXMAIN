@@ -5,6 +5,7 @@ import com.wdmaster.app.ui.viewmodel.MainViewModel
 import com.wdmaster.app.ui.viewmodel.SettingsViewModel
 import com.wdmaster.app.ui.viewmodel.TestViewModel
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.scopes.ViewModelScoped
