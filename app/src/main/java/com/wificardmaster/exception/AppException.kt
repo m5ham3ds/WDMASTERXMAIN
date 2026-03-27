@@ -3,11 +3,20 @@ package com.wdmaster.app.exception
 sealed class AppException(message: String, cause: Throwable? = null) : Exception(message, cause) {
 
     class NetworkException(message: String = "Network error occurred") : AppException(message)
-    class DatabaseException(message: String = "Database error occurred", cause: Throwable? = null) : AppException(message, cause)
+
+    class DatabaseException(
+        message: String = "Database error occurred",
+        cause: Throwable? = null
+    ) : AppException(message, cause)
+
     class PermissionException(message: String = "Permission denied") : AppException(message)
+
     class ConfigException(message: String = "Invalid configuration") : AppException(message)
+
     class ServiceException(message: String = "Service error occurred") : AppException(message)
+
     class ExportException(message: String = "Export failed") : AppException(message)
+
     class WiFiException(message: String = "WiFi operation failed") : AppException(message)
 
     companion object {
@@ -15,9 +24,14 @@ sealed class AppException(message: String, cause: Throwable? = null) : Exception
             return when (exception) {
                 is AppException -> exception
                 is java.net.ConnectException -> NetworkException("Connection failed")
-                is android.database.sqlite.SQLiteException -> DatabaseException(exception.message, exception)
-                is SecurityException -> PermissionException(exception.message)
-                else -> ServiceException(exception.message ?: "Unknown error")
+                is android.database.sqlite.SQLiteException ->
+                    DatabaseException(exception.message ?: "Database error", exception)
+
+                is SecurityException ->
+                    PermissionException(exception.message ?: "Permission denied")
+
+                else ->
+                    ServiceException(exception.message ?: "Unknown error")
             }
         }
     }
