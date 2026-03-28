@@ -15,6 +15,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
 
 private val Context.dataStore by preferencesDataStore(name = "settings")
@@ -36,6 +37,18 @@ class WDMasterApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+        // 🔥 Crash Logger (مهم جدًا)
+        Thread.setDefaultUncaughtExceptionHandler { _, throwable ->
+            try {
+                val error = throwable.stackTraceToString()
+                val file = File(filesDir, "crash_log.txt")
+                file.writeText(error)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
         instance = this
         createNotificationChannel()
         loadDarkModeSetting()
@@ -53,7 +66,6 @@ class WDMasterApp : Application() {
                 setSound(null, null)
                 enableVibration(false)
                 setShowBadge(false)
-                // ✅ الإصلاح هنا
                 lockscreenVisibility = Notification.VISIBILITY_SECRET
             }
 
